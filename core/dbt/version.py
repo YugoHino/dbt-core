@@ -1,15 +1,13 @@
+import glob
 import importlib
 import importlib.util
-import os
-import glob
 import json
+import os
 from typing import Iterator, List, Optional, Tuple
-
-import requests
 
 import dbt.exceptions
 import dbt.semver
-
+import requests
 from dbt.ui import green, red, yellow
 
 PYPI_VERSION_URL = "https://pypi.org/pypi/dbt-core/json"
@@ -121,9 +119,7 @@ def _get_plugins_msg(installed: dbt.semver.VersionSpecifier) -> str:
     return "\n".join(msg_lines)
 
 
-def _get_plugin_msg_info(
-    name: str, version_s: str, core: dbt.semver.VersionSpecifier
-) -> Tuple[str, bool]:
+def _get_plugin_msg_info(name: str, version_s: str, core: dbt.semver.VersionSpecifier) -> Tuple[str, bool]:
     plugin = dbt.semver.VersionSpecifier.from_version_string(version_s)
     latest_plugin = get_latest_version(version_url=get_package_pypi_url(name))
 
@@ -169,14 +165,12 @@ def _pad_lines(lines: List[List[str]], seperator: str = "") -> List[List[str]]:
 
     result: List[List[str]] = []
     for i, line in enumerate(lines):
-
         # add another list to hold padded strings
         if len(result) == i:
             result.append([""] * len(line))
 
         # iterate over columns in the line
         for j, item in enumerate(line):
-
             # the last column does not need padding
             if j == len(line) - 1:
                 result[i][j] = item
@@ -232,5 +226,5 @@ def _get_adapter_plugin_names() -> Iterator[str]:
             yield plugin_name
 
 
-__version__ = "1.8.0a1"
+__version__ = "1.7.3"
 installed = get_installed_version()

@@ -1,16 +1,10 @@
-import functools
-import os
-from pathlib import Path
 from typing import Dict
 
-from dbt.clients import system
-from dbt.config.project import PartialProject
-from dbt.contracts.project import TarballPackage
-from dbt.deps.base import PinnedPackage, UnpinnedPackage, get_downloads_path
-from dbt.exceptions import DependencyError, scrub_secrets, env_secrets
+from dbt.contracts.project import RegistryPackageMetadata, TarballPackage
+from dbt.deps.base import PinnedPackage, UnpinnedPackage
 from dbt.events.functions import warn_or_error
 from dbt.events.types import DepsScrubbedPackageName
-from dbt.utils import _connection_exception_retry as connection_exception_retry
+from dbt.exceptions import env_secrets, scrub_secrets
 
 
 class TarballPackageMixin:
@@ -30,6 +24,7 @@ class TarballPackageMixin:
 class TarballPinnedPackage(TarballPackageMixin, PinnedPackage):
     def __init__(self, tarball: str, tarball_unrendered: str, package: str) -> None:
         super().__init__(tarball, tarball_unrendered)
+        # setup to recycle RegistryPinnedPackage fns
         self.package = package
         self.version = "tarball"
         self.tar_path = os.path.join(Path(get_downloads_path()), self.package)

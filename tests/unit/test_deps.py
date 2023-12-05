@@ -177,6 +177,27 @@ class TestTarballPackage(unittest.TestCase):
         with self.assertRaises(MissingField):
             TarballPackage.from_dict(a_contract)
 
+    def test_tarball_pinned_package_contract_with_unrendered(self):
+        contract = TarballPackage(
+            tarball="http://example.com/invalid_url@/package.tar.gz",
+            name="my_cool_package",
+            unrendered={"tarball": "tarball_unrendered"},
+        )
+        tarball_unpinned_package = TarballUnpinnedPackage.from_contract(contract)
+
+        self.assertEqual(
+            tarball_unpinned_package.tarball, "http://example.com/invalid_url@/package.tar.gz"
+        )
+        self.assertEqual(tarball_unpinned_package.package, "my_cool_package")
+        self.assertEqual(tarball_unpinned_package.tarball_unrendered, "tarball_unrendered")
+
+        tarball_pinned_package = tarball_unpinned_package.resolved()
+        tarball_unpinned_package_dict = tarball_pinned_package.to_dict()
+        self.assertEqual(
+            tarball_unpinned_package_dict,
+            {"tarball": "tarball_unrendered", "name": "my_cool_package"},
+        )
+
 
 class TestGitPackage(unittest.TestCase):
     def test_init(self):
